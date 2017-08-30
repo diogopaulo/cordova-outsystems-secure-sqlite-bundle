@@ -61,7 +61,7 @@ function acquireLsk(successCallback, errorCallback) {
             },
             function(error) {
                 if (error.message === "Device is not secure") {
-tb                    if (window.confirm("In order to use this app, your device must have a secure lock screen. Press OK to setup your device.")) {
+                    if (window.confirm("In order to use this app, your device must have a secure lock screen. Press OK to setup your device.")) {
                         ss.secureDevice(
                             initFn,
                             function() {
