@@ -23,7 +23,6 @@ var lskCache = "";
  * @param {Function} errorCallback      Called when an error occurs acquiring the LSK.
  */
 function acquireLsk(successCallback, errorCallback) {
-    successCallback = undefined;
     // If the key is cached, use it
     if (lskCache) {
         successCallback(lskCache);
@@ -39,6 +38,7 @@ function acquireLsk(successCallback, errorCallback) {
                     function (value) {
                         lskCache = value;
                         console.log("Got Local Storage key");
+                        if(!successCallback) console.log("successCallback is undefined!");
                         successCallback(lskCache);
                     },
                     function (error) {
@@ -46,9 +46,11 @@ function acquireLsk(successCallback, errorCallback) {
                         var newKey = generateKey();
                         lskCache = undefined;
                         console.log("Setting new Local Storage key");
+                        if(!errorCallback) console.log("errorCallback is undefined!");
                         ss.set(
                             function (key) {
                                 lskCache = newKey;
+                                if(!successCallback) console.log("error successCallback is undefined!");
                                 successCallback(lskCache);
                             },
                             errorCallback,
@@ -59,7 +61,7 @@ function acquireLsk(successCallback, errorCallback) {
             },
             function(error) {
                 if (error.message === "Device is not secure") {
-                    if (window.confirm("In order to use this app, your device must have a secure lock screen. Press OK to setup your device.")) {
+tb                    if (window.confirm("In order to use this app, your device must have a secure lock screen. Press OK to setup your device.")) {
                         ss.secureDevice(
                             initFn,
                             function() {
@@ -70,6 +72,7 @@ function acquireLsk(successCallback, errorCallback) {
                         navigator.app.exitApp();
                     }
                 } else {
+                    if(!errorCallback) console.log("errorCallback is undefined!");
                     errorCallback(error);
                 }
             },
@@ -138,6 +141,7 @@ window.sqlitePlugin.openDatabase = function(options, successCallback, errorCallb
 
             // Validate the options and call the original openDatabase
             validateDbOptions(newOptions);
+            if(!originalOpenDatabase) console.log("originalOpenDatabase is undefined!");
             return originalOpenDatabase.call(window.sqlitePlugin, newOptions, successCallback, errorCallback);
         },
         errorCallback);
