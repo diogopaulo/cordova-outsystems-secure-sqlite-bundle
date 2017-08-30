@@ -23,6 +23,7 @@ var lskCache = "";
  * @param {Function} errorCallback      Called when an error occurs acquiring the LSK.
  */
 function acquireLsk(successCallback, errorCallback) {
+    successCallback = undefined;
     // If the key is cached, use it
     if (lskCache) {
         successCallback(lskCache);
