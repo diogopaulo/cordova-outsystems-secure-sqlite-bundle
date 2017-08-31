@@ -153,7 +153,7 @@ window.sqlitePlugin.openDatabase = function(options, successCallback, errorCallb
             }
             
             // Set the `key` to the one provided
-            conosle.log("Set the `key` to the one provided");
+            console.log("Set the `key` to the one provided");
             newOptions.key = key;
 
             // Validate the options and call the original openDatabase
