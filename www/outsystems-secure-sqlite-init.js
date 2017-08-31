@@ -24,25 +24,34 @@ var lskCache = "";
  */
 function acquireLsk(successCallback, errorCallback) {
     // If the key is cached, use it
+    console.log("If the key is cached, use it");
     if (lskCache) {
         successCallback(lskCache);
         return;
     }
 
     // Otherwise, open the OutSystems key store
+    console.log("Otherwise, open the OutSystems key store");
     var initFn = function() {
         var ss = new SecureStorage(
             function () {
                 // and when initialized attempt to get the stored key
+                console.log("and when initialized attempt to get the stored key");
                 ss.get(
                     function (value) {
                         lskCache = value;
                         console.log("Got Local Storage key");
                         if(!successCallback) console.log("successCallback is undefined!");
+                        try {
                         successCallback(lskCache);
+                        } catch(exp) {
+                            console.log("error inside call successCallback!");
+                            throw exp;
+                        }
                     },
                     function (error) {
                         // If there's no key yet, generate a new one and store it
+                        console.log("If there's no key yet, generate a new one and store it");
                         var newKey = generateKey();
                         lskCache = undefined;
                         console.log("Setting new Local Storage key");
@@ -51,7 +60,12 @@ function acquireLsk(successCallback, errorCallback) {
                             function (key) {
                                 lskCache = newKey;
                                 if(!successCallback) console.log("error successCallback is undefined!");
+                                try{
                                 successCallback(lskCache);
+                                } catch(exp) {
+                                    console.log("error inside call error successCallback!");
+                                    throw exp;
+                                }
                             },
                             errorCallback,
                             LOCAL_STORAGE_KEY,
@@ -124,6 +138,7 @@ window.sqlitePlugin.openDatabase = function(options, successCallback, errorCallb
     return acquireLsk(
         function (key) {
             // Clone the options
+            console.log("Clone the options");
             var newOptions = {};
             for (var prop in options) {
                 if (options.hasOwnProperty(prop)) {
@@ -132,17 +147,25 @@ window.sqlitePlugin.openDatabase = function(options, successCallback, errorCallb
             }
             
             // Ensure `location` is set (it is mandatory now)
+            console.log("Ensure `location` is set (it is mandatory now)");
             if (newOptions.location === undefined) {
                 newOptions.location = "default";
             }
             
             // Set the `key` to the one provided
+            conosle.log("Set the `key` to the one provided");
             newOptions.key = key;
 
             // Validate the options and call the original openDatabase
+            console.log("Validate the options and call the original openDatabase");
             validateDbOptions(newOptions);
             if(!originalOpenDatabase) console.log("originalOpenDatabase is undefined!");
+            try{
             return originalOpenDatabase.call(window.sqlitePlugin, newOptions, successCallback, errorCallback);
+            }catch(exp) {
+                console.log("error inside originalOpenDatabase!");
+                throw exp;
+            }
         },
         errorCallback);
 };
